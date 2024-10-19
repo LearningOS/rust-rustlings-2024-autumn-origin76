@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,7 +36,10 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.items.push(value);
+        self.count += 1;
+        println!("{}",self.count);
+        self.upheap(self.count);
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +59,56 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        
+        if right <= self.count && !(self.comparator)(&self.items[right], &self.items[left]) {
+            right
+        } else {
+            left
+        }
+    }
+    fn upheap(&mut self, mut idx: usize) {
+        while idx > 1 {
+            let parent_idx = self.parent_idx(idx);
+            if !(self.comparator)(&self.items[parent_idx], &self.items[idx]) {
+                println!("not upheap {},{}" , idx , parent_idx);
+                break;
+            }
+            println!("upheap {},{}" , idx , parent_idx);
+            self.items.swap(idx, parent_idx);
+            idx = parent_idx;
+        }
+    }
+
+    fn remove(&mut self) -> Option<T> {
+        if self.count == 0 {
+            return None;
+        }
+        let c = self.count - 1;
+        self.items.swap(1, c);
+        let removed_item = self.items.pop();
+        self.count -= 1;
+        self.downheap(1);
+
+        removed_item
+    }
+    
+    fn downheap(&mut self, index: usize) {
+        let mut current = index;
+
+        while current < self.count && self.children_present(current){
+
+            let mut smallest = self.smallest_child_idx(current);
+
+            if (self.comparator)(&self.items[current] , &self.items[smallest]) {
+                println!("downheap {},{}",current,smallest);
+                self.items.swap(current, smallest);
+                current = smallest;
+            } else {
+                break;
+            }
+        }
     }
 }
 
@@ -84,8 +134,7 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        self.remove()
     }
 }
 
